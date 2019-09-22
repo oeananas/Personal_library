@@ -1,0 +1,151 @@
+{% extends 'library/base.html' %}
+{% load static %}
+{% load rest_framework %}
+
+{% block content %}
+<h1 class="text-center">My books</h1>
+<p>(<a href="/">back to main page</a>)</p>
+<hr>
+<br><br>
+<table class="table">
+  <tr>
+    <th>number</th>
+    <th>title</th>
+    <th>author</th>
+    <th>bookshelf</th>
+  </tr>
+  {% for item in data %}
+  <tr>
+    <td>{{ item.number_on_shelf }}</td>
+    <td><a href="" data-toggle="modal" data-target="#{{ item.id }}">{{ item.title }}</a></td>
+    <td>{{ item.author_name }}</td>
+    <td>{{ item.bookshelf_name }}</td>
+  </tr>
+
+
+  <div class="modal fade text-left" id="{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Book</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="modal-body mx-3">
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="name2">Name</label>
+            <input id="name2" name="title" type="text" placeholder="Name" value="{{ item.title }}">
+          </div>
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="author2">Author</label>
+            <select name="author" id="author2">
+              {% for author in context.authors %}
+                {% if item.author_name == author.name %}
+                  <option selected value="{{ author.id }}">{{ author.name }}</option>
+                {% else %}
+                  <option value="{{ author.id }}">{{ author.name }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="bookshelf2">Bookshelf</label>
+            <select name="bookshelf" id="bookshelf2">
+              {% for bookshelf in context.bookshelves %}
+                {% if item.bookshelf_name == bookshelf.name %}
+                  <option selected value="{{ bookshelf.id }}">{{ bookshelf.name }}</option>
+                {% else %}
+                  <option value="{{ bookshelf.id }}">{{ bookshelf.name }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="number2">Number on shelf</label>
+            <input id="number2" name="number_on_shelf" type="text" placeholder="Number on shelf" value="{{ item.number_on_shelf }}">
+          </div>
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="slug2"></label>
+            <input hidden id="slug2" name="slug" type="text" placeholder="Slug" value="{{ item.slug }}">
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button formaction="{% url 'book' slug=item.slug %}" type="submit" class="btn btn-primary">Update</button>
+          <button formaction="{% url 'del_book' slug=item.slug %}" class="btn btn-danger">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+  {% endfor %}
+</table>
+
+<br><br>
+<div class="modal fade" id="modalBookForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">New Book</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{% url 'books' %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body mx-3">
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="name">Name</label>
+            <input id="name" name="title" type="text" placeholder="Name" value="{{ item.title }}">
+          </div>
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="author">Author</label>
+            <select name="author" id="author">
+              {% for author in context.authors %}
+                {% if context.author_slug == author.slug %}
+                  <option selected value="{{ author.id }}">{{ author.name }}</option>
+                {% else %}
+                  <option value="{{ author.id }}">{{ author.name }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="bookshelf">Bookshelf</label>
+            <select name="bookshelf" id="bookshelf">
+              {% for bookshelf in context.bookshelves %}
+                {% if context.bookshelf_slug == bookshelf.slug %}
+                  <option selected value="{{ bookshelf.id }}">{{ bookshelf.name }}</option>
+                {% else %}
+                  <option value="{{ bookshelf.id }}">{{ bookshelf.name }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="number">Number on shelf</label>
+            <input id="number" name="number_on_shelf" type="text" placeholder="Number on shelf" value="{{ item.number_on_shelf }}">
+          </div>
+          <div class="md-form mb-5">
+            <label data-error="wrong" data-success="right" for="slug"></label>
+            <input hidden id="slug" name="slug" type="text" placeholder="Slug" value="default">
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="text-center">
+  <a href="" class="btn btn-success" data-toggle="modal" data-target="#modalBookForm">Create Book</a>
+</div>
+{% endblock %}

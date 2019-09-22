@@ -1,0 +1,89 @@
+{% extends 'library/base.html' %}
+{% load static %}
+{% load rest_framework %}
+
+{% block content %}
+<h1 class="text-center">My bookshelves</h1>
+<p>(<a href="/">back to main page</a>)</p>
+<hr>
+<br><br>
+{% for item in data %}
+<div class="row">
+  <div class="col-6">
+    <a methods="GET" href="{% url 'bookshelf_books' bookshelf_slug=item.slug %}"><h3 class="text-center">{{ item.name }}</h3></a>
+  </div>
+  <div class="col-6">
+    <a class="btn btn-warning" href="" data-toggle="modal" data-target="#{{ item.id }}">get books</a>
+  </div>
+</div>
+
+
+<div class="modal fade" id="{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Bookshelf</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="modal-body mx-3">
+          <div class="md-form mb-5">
+            <input id="name2" name="name" type="text" placeholder="Name" value="{{ item.name }}">
+            <label data-error="wrong" data-success="right" for="name2"></label>
+          </div>
+          <div class="md-form mb-5">
+            <input hidden id="slug2" name="slug" type="text" placeholder="Slug" value="{{ item.slug }}">
+            <label data-error="wrong" data-success="right" for="slug2"></label>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button formaction="{% url 'bookshelf' slug=item.slug %}" type="submit" class="btn btn-primary">Update</button>
+          <button formaction="{% url 'del_bookshelf' slug=item.slug %}" class="btn btn-danger">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endfor %}
+<br><br>
+<div class="modal fade" id="modalBookshelfForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">New Bookshelf</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{% url 'bookshelves' %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body mx-3">
+          <div class="md-form mb-5">
+            <input id="name1" name="name" type="text" placeholder="Name">
+            <label data-error="wrong" data-success="right" for="name1"></label>
+          </div>
+          <div class="md-form mb-5">
+            <input hidden value="default" id="slug1" name="slug" type="text" placeholder="Slug">
+            <label data-error="wrong" data-success="right" for="slug1"></label>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="text-center">
+  <a href="" class="btn btn-success" data-toggle="modal" data-target="#modalBookshelfForm">Create Bookshelf</a>
+</div>
+{% endblock %}
