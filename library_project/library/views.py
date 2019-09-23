@@ -13,12 +13,23 @@ from .serializers import BookSerializer
 from .serializers import AuthorSerializer
 
 
-def set_correct_number_of_shelf(bookshelf, number, is_create=False):
+def set_correct_number_of_shelf(bookshelf, number, is_create=False, new_bookshelf=False, set_last=False):
+    """
+    Function set correct number on bookshelf, depends of books count on current bookshelf
+    :param bookshelf:
+    :param number:
+    :param is_create:
+    :param new_bookshelf:
+    :param set_last:
+    :return: number
+    """
     count = Book.objects.filter(bookshelf=bookshelf).count()
     correct_number = number
     if is_create:
-        if not number or int(number) > count + 1:
+        if int(number) > count + 1:
             correct_number = count + 1
+    elif set_last or new_bookshelf:
+        correct_number = count + 1
     else:
         if int(number) > count:
             correct_number = count
@@ -164,19 +175,37 @@ class BookViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=query_dict_data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
         return redirect(to=request.META.get('HTTP_REFERER'))
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+
+        old_bookshelf = instance.bookshelf
+        new_bookshelf = request.data.get('bookshelf')
         old_number_on_shelf = instance.number_on_shelf
         new_number_on_shelf = request.data.get('number_on_shelf')
-        bookshelf = request.data.get('bookshelf')
-        new_number_on_shelf = set_correct_number_of_shelf(bookshelf, new_number_on_shelf, is_create=False)
-        if old_number_on_shelf != new_number_on_shelf:
+        is_new_bookshelf = old_bookshelf != new_bookshelf
+        is_new_number = old_number_on_shelf != new_number_on_shelf
+
+        if is_new_bookshelf:
+            Book.objects.filter(bookshelf=old_bookshelf, number_on_shelf__gt=old_number_on_shelf) \
+                .update(number_on_shelf=F('number_on_shelf') - 1)
+
+        new_number_on_shelf = set_correct_number_of_shelf(
+            new_bookshelf,
+            new_number_on_shelf,
+            is_create=False,
+            new_bookshelf=new_bookshelf,
+        )
+        if is_new_number and not is_new_bookshelf:
             Book.objects.filter(bookshelf=instance.bookshelf, number_on_shelf=new_number_on_shelf) \
                 .update(number_on_shelf=old_number_on_shelf)
+        elif is_new_number and is_new_bookshelf:
+            last_number = set_correct_number_of_shelf(new_bookshelf, new_number_on_shelf, set_last=True)
+            Book.objects.filter(bookshelf=new_bookshelf, number_on_shelf=new_number_on_shelf) \
+                .update(number_on_shelf=last_number)
+
         request_data = request.data.dict()
         request_data['number_on_shelf'] = new_number_on_shelf
         query_dict_data = QueryDict('', mutable=True)
