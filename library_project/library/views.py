@@ -52,18 +52,21 @@ class AuthorViewSet(viewsets.ModelViewSet):
         if settings.TEST_MODE:
             return super().create(request, *args, **kwargs)
         else:
+            super().create(request, *args, **kwargs)
             return redirect(to='/authors')
 
     def update(self, request, *args, **kwargs):
         if settings.TEST_MODE:
-            return super().create(request, *args, **kwargs)
+            return super().update(request, *args, **kwargs)
         else:
+            super().update(request, *args, **kwargs)
             return redirect(to='/authors')
 
     def destroy(self, request, *args, **kwargs):
         if settings.TEST_MODE:
-            return super().create(request, *args, **kwargs)
+            return super().destroy(request, *args, **kwargs)
         else:
+            super().destroy(request, *args, **kwargs)
             return redirect(to='/authors')
 
     def list(self, request, *args, **kwargs):
@@ -89,18 +92,21 @@ class BookshelfViewSet(viewsets.ModelViewSet):
         if settings.TEST_MODE:
             return super().create(request, *args, **kwargs)
         else:
+            super().create(request, *args, **kwargs)
             return redirect(to='/bookshelves')
 
     def update(self, request, *args, **kwargs):
         if settings.TEST_MODE:
-            return super().create(request, *args, **kwargs)
+            return super().update(request, *args, **kwargs)
         else:
+            super().update(request, *args, **kwargs)
             return redirect(to='/bookshelves')
 
     def destroy(self, request, *args, **kwargs):
         if settings.TEST_MODE:
-            return super().create(request, *args, **kwargs)
+            return super().destroy(request, *args, **kwargs)
         else:
+            super().destroy(request, *args, **kwargs)
             return redirect(to='/bookshelves')
 
     def list(self, request, *args, **kwargs):
