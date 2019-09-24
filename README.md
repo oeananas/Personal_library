@@ -7,6 +7,10 @@ opportunities:
 * add, edit and review bookshelves
 * change book's bookshelf or/and number on bookshelf
 
+
+* *A book can only be created if there is at least one author and at least one bookshelf
+* *If you change the bookshelf, the book on the new shelf takes the last position
+
 # Installation
 ```bash
 pip3 install -r requirements.txt
