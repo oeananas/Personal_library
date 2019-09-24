@@ -10,10 +10,15 @@ opportunities:
 # Installation
 ```bash
 pip3 install -r requirements.txt
-cd library
+cd library_project
+./manage.py makemigrations library
 ./manage.py migrate
 ```
 # Usage
 ```bash
 ./manage.py runserver
+```
+# Tests
+```bash
+py.test
 ```
