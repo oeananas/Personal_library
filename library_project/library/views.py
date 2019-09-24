@@ -2,7 +2,8 @@ from django.db.models import F
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.http import QueryDict
-from rest_framework import viewsets
+from django.conf import settings
+from rest_framework import viewsets, status
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from .models import Bookshelf
@@ -26,12 +27,12 @@ def set_correct_number_of_shelf(bookshelf, number, is_create=False, new_bookshel
     count = Book.objects.filter(bookshelf=bookshelf).count()
     correct_number = number
     if is_create:
-        if int(number) > count + 1:
+        if number > count + 1:
             correct_number = count + 1
     elif set_last or new_bookshelf:
         correct_number = count + 1
     else:
-        if int(number) > count:
+        if number > count:
             correct_number = count
     return correct_number
 
@@ -48,16 +49,22 @@ class AuthorViewSet(viewsets.ModelViewSet):
     template_name = "library/author.html"
 
     def create(self, request, *args, **kwargs):
-        super().create(request, *args, **kwargs)
-        return redirect(to='/authors')
+        if settings.TEST_MODE:
+            return super().create(request, *args, **kwargs)
+        else:
+            return redirect(to='/authors')
 
     def update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
-        return redirect(to='/authors')
+        if settings.TEST_MODE:
+            return super().create(request, *args, **kwargs)
+        else:
+            return redirect(to='/authors')
 
     def destroy(self, request, *args, **kwargs):
-        super().destroy(request, *args, **kwargs)
-        return redirect(to='/authors')
+        if settings.TEST_MODE:
+            return super().create(request, *args, **kwargs)
+        else:
+            return redirect(to='/authors')
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -79,16 +86,22 @@ class BookshelfViewSet(viewsets.ModelViewSet):
     template_name = "library/bookshelf.html"
 
     def create(self, request, *args, **kwargs):
-        super().create(request, *args, **kwargs)
-        return redirect(to='/bookshelves')
+        if settings.TEST_MODE:
+            return super().create(request, *args, **kwargs)
+        else:
+            return redirect(to='/bookshelves')
 
     def update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
-        return redirect(to='/bookshelves')
+        if settings.TEST_MODE:
+            return super().create(request, *args, **kwargs)
+        else:
+            return redirect(to='/bookshelves')
 
     def destroy(self, request, *args, **kwargs):
-        super().destroy(request, *args, **kwargs)
-        return redirect(to='/bookshelves')
+        if settings.TEST_MODE:
+            return super().create(request, *args, **kwargs)
+        else:
+            return redirect(to='/bookshelves')
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -175,6 +188,9 @@ class BookViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=query_dict_data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        if settings.TEST_MODE:
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         return redirect(to=request.META.get('HTTP_REFERER'))
 
     def update(self, request, *args, **kwargs):
@@ -182,10 +198,11 @@ class BookViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         old_bookshelf = instance.bookshelf
-        new_bookshelf = request.data.get('bookshelf')
+        new_bookshelf = int(request.data.get('bookshelf'))
         old_number_on_shelf = instance.number_on_shelf
-        new_number_on_shelf = request.data.get('number_on_shelf')
-        is_new_bookshelf = old_bookshelf != new_bookshelf
+        new_number_on_shelf = int(request.data.get('number_on_shelf'))
+
+        is_new_bookshelf = old_bookshelf.id != new_bookshelf
         is_new_number = old_number_on_shelf != new_number_on_shelf
 
         if is_new_bookshelf:
@@ -196,7 +213,7 @@ class BookViewSet(viewsets.ModelViewSet):
             new_bookshelf,
             new_number_on_shelf,
             is_create=False,
-            new_bookshelf=new_bookshelf,
+            new_bookshelf=is_new_bookshelf,
         )
         if is_new_number and not is_new_bookshelf:
             Book.objects.filter(bookshelf=instance.bookshelf, number_on_shelf=new_number_on_shelf) \
@@ -218,6 +235,8 @@ class BookViewSet(viewsets.ModelViewSet):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
+        if settings.TEST_MODE:
+            return Response(serializer.data)
         return redirect(to=request.META.get('HTTP_REFERER'))
 
     def destroy(self, request, *args, **kwargs):
@@ -226,4 +245,6 @@ class BookViewSet(viewsets.ModelViewSet):
         instance_number_on_shelf = instance.number_on_shelf
         Book.objects.filter(bookshelf=instance.bookshelf, number_on_shelf__gt=instance_number_on_shelf) \
             .update(number_on_shelf=F('number_on_shelf') - 1)
+        if settings.TEST_MODE:
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return redirect(to=request.META.get('HTTP_REFERER'))
