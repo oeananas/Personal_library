@@ -1,4 +1,5 @@
 <!doctype html>
+{% load static %}
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -11,6 +12,7 @@
     <title>MyLib</title>
   </head>
   <body class="container text-center">
+    <img src="{% static 'img/bookshelf.jpg' %}" alt="" style="width: 100%; height: 22em">
     {% block content %}
     {% endblock %}
 

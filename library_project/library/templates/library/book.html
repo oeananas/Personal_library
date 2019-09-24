@@ -39,7 +39,7 @@
           <div class="modal-body mx-3">
             <div class="md-form mb-5">
               <label data-error="wrong" data-success="right" for="name2">Name</label>
-              <input id="name2" name="title" type="text" placeholder="Name" value="{{ item.title }}">
+              <input required id="name2" name="title" type="text" placeholder="Name" value="{{ item.title }}">
             </div>
             <div class="md-form mb-5">
               <label data-error="wrong" data-success="right" for="author2">Author</label>
@@ -67,11 +67,11 @@
             </div>
             <div class="md-form mb-5">
               <label data-error="wrong" data-success="right" for="number2">Number on shelf</label>
-              <input id="number2" name="number_on_shelf" type="number" min="1" placeholder="Number on shelf" value="{{ item.number_on_shelf }}">
+              <input required id="number2" name="number_on_shelf" type="number" min="1" placeholder="Number on shelf" value="{{ item.number_on_shelf }}">
             </div>
             <div class="md-form mb-5">
               <label data-error="wrong" data-success="right" for="slug2"></label>
-              <input hidden id="slug2" name="slug" type="text" placeholder="Slug" value="{{ item.slug }}">
+              <input required hidden id="slug2" name="slug" type="text" placeholder="Slug" value="{{ item.slug }}">
             </div>
           </div>
           <div class="modal-footer d-flex justify-content-center">
@@ -109,7 +109,7 @@
           <div class="modal-body mx-3">
             <div class="md-form mb-5">
               <label data-error="wrong" data-success="right" for="name">Name</label>
-              <input id="name" name="title" type="text" placeholder="Name" value="{{ item.title }}">
+              <input required id="name" name="title" type="text" placeholder="Name" value="{{ item.title }}">
             </div>
             <div class="md-form mb-5">
               <label data-error="wrong" data-success="right" for="author">Author</label>
@@ -137,11 +137,11 @@
             </div>
             <div class="md-form mb-5">
               <label data-error="wrong" data-success="right" for="number">Number on shelf</label>
-              <input id="number" name="number_on_shelf" type="number" min="1" placeholder="Number on shelf" value="{{ item.number_on_shelf }}">
+              <input required id="number" name="number_on_shelf" type="number" min="1" placeholder="Number on shelf" value="{{ item.number_on_shelf }}">
             </div>
             <div class="md-form mb-5">
               <label data-error="wrong" data-success="right" for="slug"></label>
-              <input hidden id="slug" name="slug" type="text" placeholder="Slug" value="default">
+              <input required hidden id="slug" name="slug" type="text" placeholder="Slug" value="default">
             </div>
           </div>
           <div class="modal-footer d-flex justify-content-center">

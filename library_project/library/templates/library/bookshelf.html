@@ -33,11 +33,11 @@
           {% csrf_token %}
           <div class="modal-body mx-3">
             <div class="md-form mb-5">
-              <input id="name2" name="name" type="text" placeholder="Name" value="{{ item.name }}">
+              <input required id="name2" name="name" type="text" placeholder="Name" value="{{ item.name }}">
               <label data-error="wrong" data-success="right" for="name2"></label>
             </div>
             <div class="md-form mb-5">
-              <input hidden id="slug2" name="slug" type="text" placeholder="Slug" value="{{ item.slug }}">
+              <input required hidden id="slug2" name="slug" type="text" placeholder="Slug" value="{{ item.slug }}">
               <label data-error="wrong" data-success="right" for="slug2"></label>
             </div>
           </div>
@@ -69,11 +69,11 @@
         {% csrf_token %}
         <div class="modal-body mx-3">
           <div class="md-form mb-5">
-            <input id="name1" name="name" type="text" placeholder="Name">
+            <input required id="name1" name="name" type="text" placeholder="Name">
             <label data-error="wrong" data-success="right" for="name1"></label>
           </div>
           <div class="md-form mb-5">
-            <input hidden value="default" id="slug1" name="slug" type="text" placeholder="Slug">
+            <input required hidden value="default" id="slug1" name="slug" type="text" placeholder="Slug">
             <label data-error="wrong" data-success="right" for="slug1"></label>
           </div>
         </div>
