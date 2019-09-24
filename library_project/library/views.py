@@ -25,7 +25,7 @@ def set_correct_number_of_shelf(bookshelf, number, is_create=False, new_bookshel
     :return: number
     """
     count = Book.objects.filter(bookshelf=bookshelf).count()
-    correct_number = number
+    correct_number = int(number) if isinstance(number, str) else number
     if is_create:
         if number > count + 1:
             correct_number = count + 1
@@ -49,25 +49,22 @@ class AuthorViewSet(viewsets.ModelViewSet):
     template_name = "library/author.html"
 
     def create(self, request, *args, **kwargs):
+        resp = super().create(request, *args, **kwargs)
         if settings.TEST_MODE:
-            return super().create(request, *args, **kwargs)
-        else:
-            super().create(request, *args, **kwargs)
-            return redirect(to='/authors')
+            return resp
+        return redirect(to='/authors')
 
     def update(self, request, *args, **kwargs):
+        resp = super().update(request, *args, **kwargs)
         if settings.TEST_MODE:
-            return super().update(request, *args, **kwargs)
-        else:
-            super().update(request, *args, **kwargs)
-            return redirect(to='/authors')
+            return resp
+        return redirect(to='/authors')
 
     def destroy(self, request, *args, **kwargs):
+        resp = super().destroy(request, *args, **kwargs)
         if settings.TEST_MODE:
-            return super().destroy(request, *args, **kwargs)
-        else:
-            super().destroy(request, *args, **kwargs)
-            return redirect(to='/authors')
+            return resp
+        return redirect(to='/authors')
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -89,25 +86,22 @@ class BookshelfViewSet(viewsets.ModelViewSet):
     template_name = "library/bookshelf.html"
 
     def create(self, request, *args, **kwargs):
+        resp = super().create(request, *args, **kwargs)
         if settings.TEST_MODE:
-            return super().create(request, *args, **kwargs)
-        else:
-            super().create(request, *args, **kwargs)
-            return redirect(to='/bookshelves')
+            return resp
+        return redirect(to='/bookshelves')
 
     def update(self, request, *args, **kwargs):
+        resp = super().update(request, *args, **kwargs)
         if settings.TEST_MODE:
-            return super().update(request, *args, **kwargs)
-        else:
-            super().update(request, *args, **kwargs)
-            return redirect(to='/bookshelves')
+            return resp
+        return redirect(to='/bookshelves')
 
     def destroy(self, request, *args, **kwargs):
+        resp = super().destroy(request, *args, **kwargs)
         if settings.TEST_MODE:
-            return super().destroy(request, *args, **kwargs)
-        else:
-            super().destroy(request, *args, **kwargs)
-            return redirect(to='/bookshelves')
+            return resp
+        return redirect(to='/bookshelves')
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
